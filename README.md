@@ -7,13 +7,14 @@ package whose contents mirror `$HOME`.
 
 - `tmux/.tmux.conf` — tmux config (Catppuccin Macchiato theme via TPM)
 - `nvim/.config/nvim/` — LazyVim config
+- `bash/.bashrc` — bash config
 
 ## Setup on a new machine
 
 ```sh
 git clone <this-repo-url> ~/dotfiles
 cd ~/dotfiles
-stow tmux nvim
+stow tmux nvim bash
 ```
 
 This symlinks each package's files into place (e.g. `~/.tmux.conf`, `~/.config/nvim`).
