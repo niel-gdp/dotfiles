@@ -1,0 +1,13 @@
+# nvim
+nvim/.config/nvim/tt.*
+nvim/.config/nvim/.tests
+nvim/.config/nvim/doc/tags
+nvim/.config/nvim/debug
+nvim/.config/nvim/.repro
+nvim/.config/nvim/foo.*
+nvim/.config/nvim/*.log
+nvim/.config/nvim/data
+
+# OS / editor cruft
+.DS_Store
+*.swp
