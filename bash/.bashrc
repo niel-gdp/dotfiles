@@ -3,7 +3,7 @@
 [[ -f "${HOME}/.local/share/kiro-cli/shell/bashrc.pre.bash" ]] && builtin source "${HOME}/.local/share/kiro-cli/shell/bashrc.pre.bash"
 
 # Path to your oh-my-bash installation.
-export OSH='/home/daniel-adamlu/.oh-my-bash'
+export OSH="${HOME}/.oh-my-bash"
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-bash is loaded.
