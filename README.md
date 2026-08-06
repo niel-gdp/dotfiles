@@ -7,7 +7,7 @@ package whose contents mirror `$HOME`.
 
 - `tmux/.tmux.conf` — tmux config (Catppuccin Macchiato theme via TPM)
 - `nvim/.config/nvim/` — LazyVim config
-- `bash/.bashrc` — bash config
+- `bash/.bashrc`, `bash/.bash_aliases`, `bash/.bash_profile`, `bash/.bash_logout` — bash config
 
 ## Setup on a new machine
 
