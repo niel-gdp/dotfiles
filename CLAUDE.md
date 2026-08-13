@@ -13,7 +13,7 @@ path under that package directory, not directly under `$HOME`.
 
 Apply a package's symlinks into `$HOME`:
 ```sh
-cd ~/dotfiles && stow tmux nvim bash
+cd ~/dotfiles && stow tmux nvim bash claude
 ```
 
 Remove a package's symlinks:
@@ -48,3 +48,7 @@ their own (see below).
   `lua/plugins/devops.lua` is the notable custom addition: adds `bashls`, `shellcheck`, and `shfmt` for
   shell scripting, on top of whatever LazyVim extras are enabled in `lazyvim.json`.
 - `bash/` — `.bashrc`, `.bash_aliases`, `.bash_profile`, `.bash_logout`.
+- `claude/.claude/` — Claude Code global config (`CLAUDE.md`, `settings.json`, `statusline.sh`,
+  `skills/<name>/SKILL.md`). Only portable config is tracked here; credentials, conversation history/
+  transcripts (`projects/`), caches, and other session-local state under `~/.claude/` are intentionally
+  left out and must never be added to this package.

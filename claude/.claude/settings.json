@@ -1,0 +1,12 @@
+{
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "verbose": false,
+  "autoCompactEnabled": true,
+  "agentPushNotifEnabled": true,
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 2
+  }
+}
