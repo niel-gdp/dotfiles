@@ -1,15 +1,22 @@
 ---
 name: create-sre-task
-description: Create a new SRE task - files a GitHub issue in GDP-ADMIN/sre-gl-project and populates it on the SRE Project & Cloud Board (org project 372) - Status, Priority, Hours Estimation, Start/Due Date, T-Shirt Sizing, Team, Projects - and assigns it to you.
+description: Create a new SRE task - files a GitHub issue in GDP-ADMIN/sre-gl-project and populates it on the SRE Project & Cloud Board (org project 372) - Status, Priority, Hours Estimation, Start/Due Date, T-Shirt Sizing, Team, Projects - and assigns it to you. If an existing sre-gl-project issue link or number is given, updates that issue with a comment instead of creating a new one.
 ---
 
 Create a task on the **"[DSO] SRE Project & Cloud Board"** (org `GDP-ADMIN`, project #372, node ID `PVT_kwDOACQejc4A72uc`). It always runs the same way, every time it's invoked, aside from the optional arguments below.
 
 If `$ARGUMENTS` is non-empty, treat it as extra context supplied by the user alongside whatever's in the conversation (e.g. a ticket link, a note on scope, a detail the conversation doesn't cover). Fold it into the drafted body in step 1 — don't bolt it on as a raw dump; put it in whichever `##` section it naturally belongs to (or add one, e.g. `## Additional Context`, if it doesn't fit an existing section). If `$ARGUMENTS` is empty, proceed exactly as before.
 
-## 1. Draft the title and body
+## 0. Detect create vs. update
 
-Look at what's been discussed in the current conversation (a bug, an incident, a piece of work). Draft:
+Check `$ARGUMENTS` (and the conversation, if the user references it there instead) for a link or number pointing at an **existing** `GDP-ADMIN/sre-gl-project` issue — e.g. `https://github.com/GDP-ADMIN/sre-gl-project/issues/4514`, `GDP-ADMIN/sre-gl-project#4514`, or a bare number the user clearly means as "that issue" (confirm with the user if a bare number is ambiguous rather than guessing). A reference to an issue in some *other* repo doesn't count — this only applies to `sre-gl-project` issues, since that's the repo this skill files into.
+
+- **Found** → this is an **update**. Skip drafting a new title/body in step 1; instead pull the existing issue for context (`gh issue view <number> --repo GDP-ADMIN/sre-gl-project`) and go to the update path in steps 1 and 4.
+- **Not found** → this is a **create**, proceed exactly as documented below.
+
+## 1. Draft the content
+
+**Create path** (no existing issue found in step 0): Look at what's been discussed in the current conversation (a bug, an incident, a piece of work). Draft:
 
 - A concise **Title**.
 - A **body** using whatever `##` sections genuinely fit the task — don't force a fixed template. Only include a section if you can fill it with real, specific content from the conversation; never write filler or a placeholder like `- [ ] ...`. Examples of shapes to consider:
@@ -19,30 +26,34 @@ Look at what's been discussed in the current conversation (a bug, an incident, a
 
 If the conversation has nothing task-shaped to draw from (fresh/unrelated session), ask the user via `AskUserQuestion` what issue they want created, then draft the body from their answer using the same rules above.
 
+**Update path** (existing issue found in step 0): the issue's title/body stay as they are — don't rewrite them. Instead draft a **comment** summarizing what's new since the issue was last touched (progress made, what changed, current status/blockers), based on what's been discussed in this conversation. Same content rules as above: only real, specific detail, no filler. Skip this entirely if `$ARGUMENTS` or the conversation already hands you the exact comment text to post verbatim — don't re-draft what the user already wrote.
+
 When referencing a PR or issue from a **different** repo than `GDP-ADMIN/sre-gl-project` (e.g. a PR in `gl-sre-terraform`), always write it as `<owner>/<repo>#<number>` (e.g. `GDP-ADMIN/gl-sre-terraform#1599`) — include the owner/org, not just the repo name. GitHub only autolinks cross-repo references in the full `owner/repo#number` form; a bare `#<number>` auto-links to that number *within* `sre-gl-project` itself (wrong issue), and `repo#number` without the owner doesn't autolink at all (dead plain text).
 
-Either way, surface the drafted title + body to the user for confirmation (e.g. in the text of one of the questions below, or as a standalone confirmation before proceeding) so they can redirect it before the issue is filed.
+Either way, surface the drafted title + body (or comment) to the user for confirmation (e.g. in the text of one of the questions below, or as a standalone confirmation before proceeding) so they can redirect it before anything is posted.
 
 ## 2. Ask the user (AskUserQuestion, dropdown-style)
 
-Always ask these — never skip, never silently default:
+Always ask these — never skip, never silently default. This applies on both the create and update paths: even when updating an existing issue, its Status/dates/etc. may have genuinely changed since it was filed, so re-ask rather than assuming the old values still hold.
 
 - **Status**: Backlog / In Progress / In review / Done
 - **Start Date**: Today / Yesterday / 2 days ago / Custom (custom → free-text YYYY-MM-DD via "Other")
 - **Due Date**: Tomorrow / 2 days later / 7 days later / Custom (custom → free-text YYYY-MM-DD via "Other")
 - **Priority**: P0 (High) / P1 (Medium) / P2 (Low)
 - **T-Shirt Sizing**: Small (0-1 Days) / Medium (1-3 Days) / Large (1 Week) / X-Large (>1 Week)
-- **Hours Estimation (time taken)**: ask "How long did/will this take?" as free text via "Other" (no plausible fixed dropdown options here, since duration varies task to task — offer 2-3 rough anchors like "15 minutes" / "1 hour" / "Custom" just so the question has options, but expect the real answer via "Other"). Accept any natural phrasing — e.g. `15 minutes`, `1 hour 30 minutes`, `45 min`, `2 hours` — and convert it to decimal hours yourself (15 minutes → 0.25, 1 hour 30 minutes → 1.5, 45 min → 0.75). Round to 2 decimal places.
+- **Hours Estimation (time taken)**: ask "How long did/will this take?" as free text via "Other" (no plausible fixed dropdown options here, since duration varies task to task — offer 2-3 rough anchors like "15 minutes" / "1 hour" / "Custom" just so the question has options, but expect the real answer via "Other"). Accept any natural phrasing — e.g. `15 minutes`, `1 hour 30 minutes`, `45 min`, `2 hours` — and convert it to decimal hours yourself (15 minutes → 0.25, 1 hour 30 minutes → 1.5, 45 min → 0.75). Round to 2 decimal places. **On the update path**, this question means "how long did *this additional* session take" — the answer gets added on top of the field's current value (fetched in step 6), not used to replace it.
 
 Resolve relative date options to real `YYYY-MM-DD` dates at run time (based on today's date).
 
 ## 3. Fields Claude sets itself (never asked)
 
 - **Team**: always `"Projects"` — fixed, no exceptions.
-- **Projects**: match the drafted title/description against the option list in the reference table below (client/project names). Pick whichever option is clearly referenced or closest in meaning. If nothing plausibly matches, use **"Other Task"**. Mention the match in the final summary so the user can correct it if wrong.
-- **Assignee**: always the current user (`@me`).
+- **Projects**: match against the option list in the reference table below (client/project names) — on the create path, match the drafted title/description; on the update path, match the existing issue's title/body (fetched in step 0). Pick whichever option is clearly referenced or closest in meaning. If nothing plausibly matches, use **"Other Task"**. Mention the match in the final summary so the user can correct it if wrong.
+- **Assignee**: always the current user (`@me`) — create path only; don't reassign an existing issue on the update path unless the user asks.
 
-## 4. Create the issue
+## 4. Create the issue, or comment on the existing one
+
+**Create path:**
 
 ```
 gh issue create --repo GDP-ADMIN/sre-gl-project --title "<title>" --body "<body>" --assignee "@me"
@@ -50,15 +61,25 @@ gh issue create --repo GDP-ADMIN/sre-gl-project --title "<title>" --body "<body>
 
 Capture the printed issue URL.
 
+**Update path:** don't create anything. Post the comment drafted in step 1 to the existing issue instead:
+
+```
+gh issue comment <number> --repo GDP-ADMIN/sre-gl-project --body "<comment>"
+```
+
+Use the existing issue's URL (from step 0) as `<issue-url>` in step 5.
+
 ## 5. Add it to the project (idempotent)
 
 ```
 gh project item-add 372 --owner GDP-ADMIN --url "<issue-url>" --format json
 ```
 
-Capture `.id` from the JSON output as `ITEM_ID`. This is safe to run even if the repo's own `github-issue-processor` workflow also adds the issue to the project asynchronously — GitHub Projects de-dupes by content, so this won't create a duplicate item.
+Capture `.id` from the JSON output as `ITEM_ID`. This is safe to run even if the repo's own `github-issue-processor` workflow also adds the issue to the project asynchronously — GitHub Projects de-dupes by content, so this won't create a duplicate item. On the update path this is also how you get `ITEM_ID` for an issue that's already on the board — it returns the existing item instead of creating a new one.
 
 ## 6. Set the project fields
+
+On the update path, first read the item's current field values (e.g. `gh project item-list 372 --owner GDP-ADMIN --format json` filtered to `ITEM_ID`, or a GraphQL `node(id: ...)` query) so you can add the new Hours Estimation answer on top of the existing number rather than overwriting it — see step 2.
 
 For every field below, run:
 
@@ -167,4 +188,4 @@ to get fresh IDs, retry the failed edit once, and tell the user this file's refe
 
 ## 8. Report back
 
-Print the issue URL and a short summary of every field that was set (Status, Priority, Dates, Sizing, Team, Projects match, Hours Estimation).
+Print the issue URL and a short summary of every field that was set (Status, Priority, Dates, Sizing, Team, Projects match, Hours Estimation). On the update path, say explicitly that this updated an existing issue via comment rather than creating a new one, and note the new cumulative Hours Estimation total.
