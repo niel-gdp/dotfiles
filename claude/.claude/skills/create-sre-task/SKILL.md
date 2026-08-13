@@ -19,6 +19,8 @@ Look at what's been discussed in the current conversation (a bug, an incident, a
 
 If the conversation has nothing task-shaped to draw from (fresh/unrelated session), ask the user via `AskUserQuestion` what issue they want created, then draft the body from their answer using the same rules above.
 
+When referencing a PR or issue from a **different** repo than `GDP-ADMIN/sre-gl-project` (e.g. a PR in `gl-sre-terraform`), always write it as `<owner>/<repo>#<number>` (e.g. `GDP-ADMIN/gl-sre-terraform#1599`) — include the owner/org, not just the repo name. GitHub only autolinks cross-repo references in the full `owner/repo#number` form; a bare `#<number>` auto-links to that number *within* `sre-gl-project` itself (wrong issue), and `repo#number` without the owner doesn't autolink at all (dead plain text).
+
 Either way, surface the drafted title + body to the user for confirmation (e.g. in the text of one of the questions below, or as a standalone confirmation before proceeding) so they can redirect it before the issue is filed.
 
 ## 2. Ask the user (AskUserQuestion, dropdown-style)
