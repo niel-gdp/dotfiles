@@ -36,7 +36,9 @@ elif [ "$PCT" -ge 70 ]; then BAR_COLOR="$YELLOW"
 else BAR_COLOR="$GREEN"; fi
 
 FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
-BAR=$(printf "%${FILLED}s" | tr ' ' '█')$(printf "%${EMPTY}s" | tr ' ' '░')
+BAR=""
+for ((i = 0; i < FILLED; i++)); do BAR+="█"; done
+for ((i = 0; i < EMPTY; i++)); do BAR+="░"; done
 
 MINS=$((DURATION_MS / 60000)); SECS=$(((DURATION_MS % 60000) / 1000))
 
@@ -52,6 +54,5 @@ if git rev-parse --git-dir > /dev/null 2>&1; then
     [ "$MODIFIED" -gt 0 ] && GIT_STATUS="${GIT_STATUS}${YELLOW}~${MODIFIED}${RESET}"
 fi
 
-echo -e "${CYAN}[$MODEL]${RESET} 📁 ${DIR##*/}$BRANCH $GIT_STATUS"
 COST_FMT=$(printf '$%.2f' "$COST")
-echo -e "${BAR_COLOR}${BAR}${RESET} ${PCT}% | ${CYAN}↑ ${INPUT_FMT}${RESET} ${YELLOW}↓ ${OUTPUT_FMT}${RESET} | ${MAGENTA}${COST_FMT}${RESET} | ⏱️ ${MINS}m ${SECS}s"
+echo -e "${CYAN}[$MODEL]${RESET} 📁 ${DIR##*/}$BRANCH $GIT_STATUS | ${BAR_COLOR}${BAR}${RESET} ${PCT}% | ${CYAN}↑ ${INPUT_FMT}${RESET} ${YELLOW}↓ ${OUTPUT_FMT}${RESET} | ${MAGENTA}${COST_FMT}${RESET} | ⏱️ ${MINS}m ${SECS}s"
