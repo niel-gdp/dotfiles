@@ -8,6 +8,19 @@ nvim/.config/nvim/foo.*
 nvim/.config/nvim/*.log
 nvim/.config/nvim/data
 
+# claude: session-local state, never part of the stow package
+claude/.claude/.credentials.json
+claude/.claude/.last-cleanup
+claude/.claude/.last-update-result.json
+claude/.claude/history.jsonl
+claude/.claude/backups/
+claude/.claude/cache/
+claude/.claude/file-history/
+claude/.claude/projects/
+claude/.claude/sessions/
+claude/.claude/session-env/
+claude/.claude/shell-snapshots/
+
 # OS / editor cruft
 .DS_Store
 *.swp
