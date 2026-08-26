@@ -162,11 +162,6 @@ export PATH=$PATH:/usr/local/go/bin
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path bash)"
 
-export UV_INDEX_GEN_AI_INTERNAL_USERNAME=oauth2accesstoken
-export UV_INDEX_GEN_AI_INTERNAL_PASSWORD="$(gcloud auth print-access-token)"
-export UV_INDEX_GEN_AI_USERNAME=oauth2accesstoken
-export UV_INDEX_GEN_AI_PASSWORD="$(gcloud auth print-access-token)"
-
 gclone() { git clone "git@github.com:GDP-ADMIN/${1}"; }
 
 # Terragrunt
