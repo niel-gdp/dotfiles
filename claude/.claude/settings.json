@@ -1,13 +1,24 @@
 {
+  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
     "padding": 2
   },
+  "feedbackDrafts": "notify",
+  "attribution": {
+    "sessionUrl": false
+  },
   "effortLevel": "high",
+  "modelSettings": {
+    "claude-sonnet-5": {
+      "effortLevel": "medium"
+    }
+  },
   "tui": "fullscreen",
   "verbose": false,
+  "preferredNotifChannel": "auto",
   "autoCompactEnabled": true,
-  "agentPushNotifEnabled": true,
-  "model": "sonnet"
+  "inputNeededNotifEnabled": false,
+  "agentPushNotifEnabled": true
 }
