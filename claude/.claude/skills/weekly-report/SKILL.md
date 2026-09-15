@@ -119,7 +119,7 @@ Assemble the full report:
 ...
 ```
 
-Show the draft to Daniel for confirmation before saving — he may want to move an item between sections, tweak wording, or add something the board doesn't capture. If this is an update to an existing report (step 2), show just the new/changed bullets rather than the whole document, so Daniel can confirm quickly.
+Print the full draft as plain markdown text directly in the conversation (inside a fenced code block, not buried inside an `AskUserQuestion` prompt or option — Daniel can't see the full content there). If this is an update to an existing report (step 2), print just the new/changed bullets rather than the whole document, so Daniel can confirm quickly. After printing it, ask a short plain follow-up (a normal message, or a simple `AskUserQuestion` with just a save/edit choice — never the draft content itself as a question body) for confirmation before saving — he may want to move an item between sections, tweak wording, or add something the board doesn't capture.
 
 ## 7. Save the file
 
