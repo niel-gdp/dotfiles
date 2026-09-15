@@ -1,8 +1,5 @@
 # Global Claude Instructions
 
-- Never add "Co-Authored-By" lines to git commits.
-- Never include Claude attribution or "Generated with Claude Code" in PR descriptions or any other output.
-
 ## Terraform / Terragrunt (gl-sre-terraform and similar repos)
 
 - Use `aws-terragrunt` instead of the bare `terragrunt` binary for every terragrunt command (`init`, `plan`, `apply`, `state`, `import`, etc.) in repos backed by the `gl-terragrunt-state` S3 backend. It's a bashrc function on this machine:
