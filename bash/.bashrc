@@ -1,4 +1,3 @@
-
 # Kiro CLI pre block. Keep at the top of this file.
 [[ -f "${HOME}/.local/share/kiro-cli/shell/bashrc.pre.bash" ]] && builtin source "${HOME}/.local/share/kiro-cli/shell/bashrc.pre.bash"
 
@@ -162,26 +161,28 @@ export PATH=$PATH:/usr/local/go/bin
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path bash)"
 
+export QT_QPA_PLATFORM=xcb
+
 gclone() { git clone "git@github.com:GDP-ADMIN/${1}"; }
 
 # Terragrunt
 aws-terragrunt() {
-	export AWS_PROFILE=gl-exploration
-	SOURCE_PROFILE=$(aws configure get source_profile --profile gl-exploration)
-	ROLE_ARN=$(aws configure get role_arn --profile gl-exploration)
+  export AWS_PROFILE=gl-exploration
+  SOURCE_PROFILE=$(aws configure get source_profile --profile gl-exploration)
+  ROLE_ARN=$(aws configure get role_arn --profile gl-exploration)
 
-	CREDS=$(aws sts assume-role --role-arn "$ROLE_ARN" --role-session-name "terragrunt-session" --profile "$SOURCE_PROFILE" --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)
+  CREDS=$(aws sts assume-role --role-arn "$ROLE_ARN" --role-session-name "terragrunt-session" --profile "$SOURCE_PROFILE" --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)
 
-	export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | cut -f1)
-	export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | cut -f2)  
-	export AWS_SESSION_TOKEN=$(echo "$CREDS" | cut -f3)
-	unset AWS_PROFILE
+  export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | cut -f1)
+  export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | cut -f2)
+  export AWS_SESSION_TOKEN=$(echo "$CREDS" | cut -f3)
+  unset AWS_PROFILE
 
-	terragrunt "$@"
+  terragrunt "$@"
 }
 
 # Enable the subsequent settings only in interactive sessions
 case $- in
-  *i*) ;;
-    *) return;;
+*i*) ;;
+*) return ;;
 esac
