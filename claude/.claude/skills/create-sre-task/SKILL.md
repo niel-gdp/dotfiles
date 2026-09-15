@@ -34,12 +34,20 @@ Either way, surface the drafted title + body (or comment) to the user for confir
 
 ## 2. Ask the user (AskUserQuestion, dropdown-style)
 
-Always ask these — never skip, never silently default. This applies on both the create and update paths: even when updating an existing issue, its Status/dates/etc. may have genuinely changed since it was filed, so re-ask rather than assuming the old values still hold.
+Always ask these four — never skip, never silently default. This applies on both the create and update paths: even when updating an existing issue, its Status/dates/etc. may have genuinely changed since it was filed, so re-ask rather than assuming the old values still hold.
 
 - **Status**: Backlog / In Progress / In review / Done
 - **Start Date**: Today / Yesterday / 2 days ago / Custom (custom → free-text YYYY-MM-DD via "Other")
 - **Due Date**: Tomorrow / 2 days later / 7 days later / Custom (custom → free-text YYYY-MM-DD via "Other")
 - **Priority**: P0 (High) / P1 (Medium) / P2 (Low)
+
+**T-Shirt Sizing** and **Hours Estimation** size/time an actual work session, so whether to ask depends on the path:
+
+- **Create path**: always ask both — never skip.
+- **Update path**: ask both only if this session involved real work (progress, a fix, an investigation) reflected in the drafted comment. Skip both entirely — don't ask, don't touch either field in step 6 — if the update is purely informational (e.g. adding a reference/ticket link, a note, a typo correction) with no work session to size or time. State plainly which case applies before proceeding, so the user can override if they'd rather log time for it anyway.
+
+When asked:
+
 - **T-Shirt Sizing**: Small (0-1 Days) / Medium (1-3 Days) / Large (1 Week) / X-Large (>1 Week)
 - **Hours Estimation (time taken)**: ask "How long did/will this take?" as free text via "Other" (no plausible fixed dropdown options here, since duration varies task to task — offer 2-3 rough anchors like "15 minutes" / "1 hour" / "Custom" just so the question has options, but expect the real answer via "Other"). Accept any natural phrasing — e.g. `15 minutes`, `1 hour 30 minutes`, `45 min`, `2 hours` — and convert it to decimal hours yourself (15 minutes → 0.25, 1 hour 30 minutes → 1.5, 45 min → 0.75). Round to 2 decimal places. **On the update path**, this question means "how long did *this additional* session take" — the answer gets added on top of the field's current value (fetched in step 6), not used to replace it.
 
@@ -79,7 +87,7 @@ Capture `.id` from the JSON output as `ITEM_ID`. This is safe to run even if the
 
 ## 6. Set the project fields
 
-On the update path, first read the item's current field values (e.g. `gh project item-list 372 --owner GDP-ADMIN --format json` filtered to `ITEM_ID`, or a GraphQL `node(id: ...)` query) so you can add the new Hours Estimation answer on top of the existing number rather than overwriting it — see step 2.
+On the update path, if T-Shirt Sizing / Hours Estimation were asked (per step 2), first read the item's current field values (e.g. `gh project item-list 372 --owner GDP-ADMIN --format json` filtered to `ITEM_ID`, or a GraphQL `node(id: ...)` query) so you can add the new Hours Estimation answer on top of the existing number rather than overwriting it.
 
 For every field below, run:
 
@@ -89,7 +97,7 @@ gh project item-edit --id "$ITEM_ID" --project-id PVT_kwDOACQejc4A72uc --field-i
 
 (or `--date <YYYY-MM-DD>` for Start/Due Date, `--number <N>` for Hours Estimation — see the "Type" column).
 
-Always set: Status, Start Date, Due Date, Priority, T-Shirt Sizing, Team, Projects, Hours Estimation. None of these are optional or skippable.
+Always set: Status, Start Date, Due Date, Priority, Team, Projects. None of these are optional or skippable. Set T-Shirt Sizing and Hours Estimation too, unless step 2 determined this is a purely informational update path with no work session — in that case leave both fields untouched.
 
 ### Field reference table
 
@@ -142,37 +150,39 @@ Always set: Status, Start Date, Due Date, Priority, T-Shirt Sizing, Team, Projec
 
 | Name | Option ID | Name | Option ID |
 |---|---|---|---|
-| Djarum FED Sales | `edf05185` | Springboard | `3275d67d` |
-| BCAF - Impostor | `fd881460` | korika | `0429ca2f` |
-| Padma - PMS | `7c874093` | Lungo | `6eae7c46` |
-| BCAL - Sentinel | `aa8a5739` | BCAF SumAHU | `3f7fb1be` |
-| Kompit | `2f604ea7` | DasiJR | `70387ad0` |
-| Other Task | `0f3dcf7d` | Latte-AI | `df0396b5` |
-| GLAIR Vision | `99ad2c9b` | BCA | `b4b8601c` |
-| Kaskus | `02349103` | Meemo | `566a000e` |
-| Gloria | `fa056c65` | Glance | `1f4bb987` |
-| Prosa | `82cfe0dc` | Winters | `521686ea` |
-| Glair TSEL | `29ca03bb` | BNPL | `76f35373` |
-| Jumpstart - Piccolo | `caec2bbd` | Special Project | `fdc86c2d` |
-| Kumparan | `c35dacb4` | BCA - Degree | `06b4eb33` |
-| BCAF - Tarico | `4e7a3cfd` | GLChat | `5110c47d` |
-| Indonesiakaya | `5f873001` | POC Demo | `75c9df66` |
-| Savoria Sire | `f1af89c9` | GL Connectors | `db71535b` |
-| BCAF - Astari Healthcheck | `51271382` | Nexus | `03dc5dd6` |
-| Mocha | `5bbe90c4` | langfuse | `907811f6` |
-| Buzz | `5376f7b3` | CPI | `d4ac0d3f` |
-| Kimia Farma | `e0b44036` | Savoria Planogram | `a1f1c682` |
-| GSDP | `aeaca3e4` | Langflow | `8966ced3` |
-| Endeus | `cf465766` | Binus | `5a1c3d2b` |
-| BCALife | `acbfa8b7` | | |
-| zkpass | `6cdde18d` | | |
-| GIK | `62b3aec6` | | |
-| Regtech SKK | `f11b2cbc` | | |
-| AVA | `b1962c7f` | | |
-| CCEP | `edf1eff7` | | |
-| DorWay | `d5c93cc9` | | |
-| Djarum Fraud | `8c64138e` | | |
-| YMMI | `ca5f3f05` | | |
+| Djarum FED Sales | `f18afe32` | Lungo | `e70572a4` |
+| BCAF - Impostor | `c6772d9b` | BCAF SumAHU | `c8cb5364` |
+| Padma - PMS | `b69f634e` | DasiJR | `7ffe2642` |
+| BCAL - Sentinel | `f314b362` | Latte-AI | `8915d154` |
+| Kompit | `800c6cd3` | BCA | `0bdbe9c9` |
+| Other Task | `ea9241d8` | Meemo | `d15ec20f` |
+| GLAIR Vision | `1092c752` | Glance | `412a29eb` |
+| Kaskus | `3f0814ae` | Winters | `417ad7a8` |
+| Gloria | `98e3063d` | BNPL | `ff740691` |
+| Prosa | `3dce023e` | Special Project | `61f60981` |
+| Glair TSEL | `dd28687f` | BCA - Degree | `1ae3f053` |
+| Jumpstart - Piccolo | `1983d0a5` | GLChat | `6f4e7752` |
+| Kumparan | `e109bf75` | POC Demo | `adc011a3` |
+| BCAF - Tarico | `927816be` | GL Connectors | `5a7b3d5c` |
+| Indonesiakaya | `f0ac40fb` | Nexus | `1cfdca39` |
+| Savoria Sire | `2224fd81` | langfuse | `597b7743` |
+| BCAF - Astari Healthcheck | `fe63df13` | CPI | `5aba0b6d` |
+| Mocha | `aa44bc90` | Savoria Planogram | `512714a2` |
+| Buzz | `8402105d` | Langflow | `478aa957` |
+| Kimia Farma | `835fa50a` | Binus | `5df9c5c0` |
+| GSDP | `68ef118e` | auto-rec | `6bc53eb0` |
+| Endeus | `8c156133` | Github access | `f6c552b1` |
+| BCALife | `460e5e4d` | HCI | `ce480dd1` |
+| zkpass | `3391bf5c` | [AWS] Cloud Permission | `e18105f1` |
+| GIK | `188c2de1` | GCP Permission | `1cbde2c4` |
+| Regtech SKK | `c9efb723` | OpenSandbox | `bd9fb066` |
+| AVA | `22b03620` | [SaaS] Access | `6177d360` |
+| CCEP | `b8ea0d3a` | Healtcheck ICR Static + QD | `0789fb9f` |
+| DorWay | `dd60a300` | Agentic Engineering Workflows | `813d7ab4` |
+| Djarum Fraud | `b46ca4a9` | SRE Copilot | `979bba82` |
+| YMMI | `209b9560` | E2B | `1daf9c55` |
+| Springboard | `9b5e1595` | [Azure] Cloud Permission | `5a32358a` |
+| korika | `68b1c2de` | [GCP] Cloud Permission | `455ab868` |
 
 If the task clearly refers to a client/project not in this table (the board's option list may have grown since this file was written), fall back to "Other Task" rather than guessing at an option ID, and mention that in the final summary.
 
@@ -188,4 +198,4 @@ to get fresh IDs, retry the failed edit once, and tell the user this file's refe
 
 ## 8. Report back
 
-Print the issue URL and a short summary of every field that was set (Status, Priority, Dates, Sizing, Team, Projects match, Hours Estimation). On the update path, say explicitly that this updated an existing issue via comment rather than creating a new one, and note the new cumulative Hours Estimation total.
+Print the issue URL and a short summary of every field that was set (Status, Priority, Dates, Team, Projects match, and Sizing/Hours Estimation if they were set). On the update path, say explicitly that this updated an existing issue via comment rather than creating a new one; note the new cumulative Hours Estimation total if it was updated, or state that Sizing/Hours Estimation were left unchanged because this was a purely informational update.
