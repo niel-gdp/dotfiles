@@ -163,6 +163,10 @@ export PATH=$PATH:/usr/local/go/bin
 
 export QT_QPA_PLATFORM=xcb
 
+# browser-harness: default browser auto-detect doesn't recognize this Brave
+# install, so point it at the CDP endpoint directly.
+export BU_CDP_URL=http://localhost:9222
+
 gclone() { git clone "git@github.com:GDP-ADMIN/${1}"; }
 
 # Terragrunt
